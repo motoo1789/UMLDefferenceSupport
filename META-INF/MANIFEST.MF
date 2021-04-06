@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: UMLDifferenceSupport
-Bundle-SymbolicName: UMLDifferenceSupport
+Bundle-SymbolicName: UMLDifferenceSupport;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: umldifferencesupport.Activator
 Require-Bundle: org.eclipse.ui,

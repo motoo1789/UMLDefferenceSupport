@@ -17,10 +17,11 @@ import listner.ElementChangedListener;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin implements IStartup,BundleActivator {
+public class Activator implements IStartup,BundleActivator {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "UMLDifferenceSupport"; //$NON-NLS-1$
+	private static BundleContext context;
 
 	// The shared instance
 	private static Activator plugin;
@@ -39,7 +40,7 @@ public class Activator extends AbstractUIPlugin implements IStartup,BundleActiva
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
-		super.start(context);
+		Activator.context = context;
 		System.out.println("ActivatorActivatorActivatorActivatorActivatorActivator");
 	}
 
@@ -49,7 +50,7 @@ public class Activator extends AbstractUIPlugin implements IStartup,BundleActiva
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
-		super.stop(context);
+		Activator.context = null;
 	}
 
 	/**
@@ -68,19 +69,21 @@ public class Activator extends AbstractUIPlugin implements IStartup,BundleActiva
 	@Override
 	public void earlyStartup() {
 		// TODO 自動生成されたメソッド・スタブ
-		System.out.println("ActivatorActivatorActivatorActivatorActivatorActivator");
+		System.err.println("UMLDifferenceSupport.Activator");
 		plugin = this;
 
 		final IWorkbench workbench = GetPluginResource.getWorkbench();
 		workbench.getDisplay().asyncExec(new Runnable() {
-
 			@Override
 			public void run() {
-				// TODO 自動生成されたメソッド・スタブ
-				ecl = new ElementChangedListener();
-				JavaCore.addElementChangedListener(ecl);
+				System.out.println("Activator.run");
+				IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+				if (window != null) {
+					// do something
+					ecl = new ElementChangedListener();
+					JavaCore.addElementChangedListener(ecl);
+				}
 			}
-
 		});
 	}
 

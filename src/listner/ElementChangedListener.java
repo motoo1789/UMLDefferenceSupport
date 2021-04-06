@@ -33,13 +33,18 @@ public class ElementChangedListener extends AbstractListner implements IElementC
 		switch(kind){
 
 		case IJavaElementDelta.ADDED:
+			System.out.println("ElementChangedListener.elementChanged.CHANGED");
+			break;
+
 		case IJavaElementDelta.REMOVED:
+			System.out.println("ElementChangedListener.elementChanged.REMOVED");
 			listnerToElement();
 			break;
 
 		case IJavaElementDelta.CHANGED:
 			if((arg0.getDelta().getFlags() & IJavaElementDelta.F_AST_AFFECTED) != 0) {
 				if(_check(arg0.getDelta().getAffectedChildren())) {
+					System.out.println("ElementChangedListener.elementChanged.CHANGED");
 					listnerToElement();
 				}
 			}

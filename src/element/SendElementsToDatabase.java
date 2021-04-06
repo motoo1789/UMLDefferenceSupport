@@ -16,8 +16,9 @@ public class SendElementsToDatabase implements IElementOperation {
 	@Override
 	public void excute() {
 		// TODO 自動生成されたメソッド・スタブ
-		HashMap<String,List<String>> instancedata = this.getelement.getInstanceList();
+		System.out.println("SendElementsToDatabase.excute");
 
+		HashMap<String,List<String>> instancedata = this.getelement.getInstanceList();
 		Iterator<String> key_itr = instancedata.keySet().iterator();
 
 		while(key_itr.hasNext())

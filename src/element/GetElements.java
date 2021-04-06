@@ -51,6 +51,7 @@
     	@Override
     	public void excute()
     	{
+    		System.out.println("GetElements.excute");
     		// TODO 自動生成されたメソッド・スタブ
     		IWorkspaceRoot root = singletonPluginResource.getWorcspaceRoot();
     		getElement(root);

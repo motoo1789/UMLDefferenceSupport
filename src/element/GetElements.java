@@ -74,18 +74,22 @@
     			IJavaElement[] elements = model.getChildren();
 
     			for(int i = 0; i < elements.length; i++) {
+    				System.out.println("GetElements.excute.i:for");
     				if(elements[i].getElementType() == 2) {
     					for(int j = 0; j < ((IJavaProject)elements[i]).getChildren().length; j++) {
+    						System.out.println("GetElements.excute.j:for");
     						if(((IJavaProject)elements[i]).getChildren()[j].getElementType() == 3) {
     							IPackageFragmentRoot packageFragmentRoot = ((IPackageFragmentRoot)((IJavaProject)elements[i]).getChildren()[j]);
 
     							for(int k = 0; k < packageFragmentRoot.getChildren().length; k++) {//すべてのパッケージを網羅
+    								System.out.println("GetElements.excute.k:for");
     								if(packageFragmentRoot.getChildren()[k].getElementType() == 4) {
     									IPackageFragment packageFragment = ((IPackageFragment)packageFragmentRoot.getChildren()[k]);
 
     									makeOriginalClassNameList(packageFragment);//先にもとのクラス名の一覧を取得
 
     									for(int n = 0; n < packageFragment.getChildren().length; n++) {//パッケージからicompilationunitを探す
+    										System.out.println("GetElements.excute.n:for");
     										if(packageFragment.getChildren()[n].getElementType() == 5) {
     											ICompilationUnit compilationUnit = ((ICompilationUnit)packageFragment.getChildren()[n]);
 
@@ -99,7 +103,7 @@
 
     											IJavaElement elementss[] = compilationUnit.getChildren();
     											for(IJavaElement javaElement : elementss) {
-
+    												System.out.println("GetElements.excute.:拡張for文");
     												String className = "ClassGetErr";
 
     												if(javaElement.getElementType() == IJavaElement.TYPE) { //ソースタイプ(クラス)かを確認
@@ -128,6 +132,7 @@
 
 
     													for(IField field : fields) {
+    														System.out.println("GetElements.excute.IField拡張for文");
     														addAnnotation = false;
 
     														if(originalClassNameList.contains(field.toString().split(" ", 2)[0])) {//インスタンスかを確認

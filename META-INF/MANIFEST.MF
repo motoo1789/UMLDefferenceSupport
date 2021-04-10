@@ -13,3 +13,6 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: UMLDifferenceSupport
 Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,
+ lib/HikariCP-3.4.1.jar,
+ lib/mysql-connector-java-5.1.47-bin.jar

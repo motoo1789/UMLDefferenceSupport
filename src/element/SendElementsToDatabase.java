@@ -1,126 +1,48 @@
 package element;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.sql.Connection;
+import java.sql.Statement;
 
-public class SendElementsToDatabase implements IElementOperation {
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
-	GetElements getelement;
-	Map<String,List<String>> sendClassInfo = new HashMap<String,List<String>>();
+class SendElementsToDatabase implements IElementOperation {
 
+	static SendElementsToDatabase singleton = new SendElementsToDatabase();
+	private HikariDataSource hikari;
+	private Connection con;
+	private Statement stm;
 
-	SendElementsToDatabase(GetElements getelement)
+	private SendElementsToDatabase()
 	{
-		this.getelement = getelement;
+		// データベースmotooへの接続
+		System.out.println("SendElementsToDatabase.コンストラクタ");
+
+		HikariConfig config = new HikariConfig();
+		config.setDriverClassName("com.mysql.jdbc.Driver");
+		config.setJdbcUrl("jdbc:mysql://localhost:3306/motoo");
+
+		config.setUsername("root");
+		config.setPassword("root");
+
+		hikari= new HikariDataSource(config);
+
+	}
+
+	static SendElementsToDatabase getInstance()
+	{
+		return singleton;
 	}
 
 	@Override
-	public void excute() {
+	public void excute()
+	{
 		// TODO 自動生成されたメソッド・スタブ
-		System.out.println("SendElementsToDatabase.excute");
-
-
-//		getClassList();
-//		getFieldList();
-//		getMethodList();
+		sendDatabase();
 	}
 
-	private void getClassList2() {
-		ArrayList<String> classdata = this.getelement.getClassList();
-
-		if(!classdata.isEmpty())
-		{
-			Iterator<String> key_itr = classdata.iterator();
-
-			while(key_itr.hasNext())
-			{
-				String classname = key_itr.next();
-				System.out.println(classname + "：[" + classname + "]");
-				List<String> fieldList = getFieldList2(classname);
-				List<String> methodList = new ArrayList<String>();
-
-			}
-		}
-		else
-		{
-			System.out.println("SendElementsToDatabase.excute.getFieldList:空らしい");
-		}
-	}
-
-	private List<String> getFieldList2(String key)
+	private void sendDatabase()
 	{
-		HashMap<String,List<String>> fielddata = this.getelement.getFieldList();
-
-		return fielddata.get(key);
+		//　motooに送信
 	}
-	private List<String> getMethodList2(String key)
-	{
-		HashMap<String,List<String>> methoddata = this.getelement.getMethodList();
-
-		return methoddata.get(key);
-	}
-
-	/*
-	private void getClassList() {
-		ArrayList<String> classdata = this.getelement.getClassList();
-
-		if(!classdata.isEmpty())
-		{
-			Iterator<String> key_itr = classdata.iterator();
-
-			while(key_itr.hasNext())
-			{
-				String classname = key_itr.next();
-				System.out.println(classname + "：[" + classname + "]");
-			}
-		}
-		else
-		{
-			System.out.println("SendElementsToDatabase.excute.getFieldList:空らしい");
-		}
-	}
-
-
-
-
-
-	private void getFieldList() {
-		HashMap<String,List<String>> fielddata = this.getelement.getFieldList();
-		Iterator<String> key_itr = fielddata.keySet().iterator();
-
-		if(!fielddata.isEmpty())
-		{
-			while(key_itr.hasNext())
-			{
-				String filedname = key_itr.next();
-				System.out.println(filedname + "：" + fielddata.get(filedname));
-			}
-		}
-		else
-		{
-			System.out.println("SendElementsToDatabase.excute.getFieldList:空らしい");
-		}
-	}
-
-	private void getMethodList() {
-		HashMap<String,List<String>> methoddata = this.getelement.getMethodList();
-		Iterator<String> key_itr = methoddata.keySet().iterator();
-
-		if(!methoddata.isEmpty())
-		{
-			while(key_itr.hasNext())
-			{
-				String methodname = key_itr.next();
-				System.out.println(methodname + "：" + methoddata.get(methodname));
-			}
-		}
-		else
-		{
-			System.out.println("SendElementsToDatabase.excute.getMethodList:空らしい");
-		}
-	}
-	*/
 }

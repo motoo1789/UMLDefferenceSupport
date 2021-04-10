@@ -3,8 +3,8 @@ package listner;
 import java.util.HashMap;
 import java.util.Map;
 
-import element.GetElements;
-import element.SendElementsToDatabase;
+import element.GetElementsFromSourceCode;
+import element.GetElementsList;
 
 public abstract class AbstractListner {
 
@@ -29,7 +29,7 @@ public abstract class AbstractListner {
 	private void setElementObject()
 	{
 		// マップへオブジェクトの追加
-		elementoperation.put(GET_KEY, new GetElements());
+		elementoperation.put(GET_KEY, new GetElementsFromSourceCode());
 	}
 
 	protected abstract void listnerToElement();

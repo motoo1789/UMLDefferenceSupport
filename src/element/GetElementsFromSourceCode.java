@@ -106,9 +106,33 @@
 
     												if(javaElement.getElementType() == IJavaElement.TYPE) { //ソースタイプ(クラス)かを確認
     													IType type = (IType)javaElement;
-    													IField[] fields = type.getFields();
-    													IMethod[] methods = type.getMethods();
 
+    													System.out.println();
+    													System.out.println("classname:" + type.getElementName());
+    													IField[] fields = type.getFields();
+    													for(IField field : fields)
+    														System.out.println("fieldname:" + field.getElementName() + " type:" + field.getTypeSignature());
+
+    													IMethod[] methods = type.getMethods();
+    													for(IMethod method : methods)
+    													{
+    														System.out.println("----------methodname----------");
+    														System.out.println("methodname:" + method.getElementName());
+    														System.out.println("----------signaturetype----------");
+    														System.out.println("sigunaturetype:" + method.getSignature());
+    														System.out.println();
+    														System.out.println("----------returntype----------");
+    														System.out.println(" returntype:" + method.getReturnType());
+    														System.out.println("----------paratype----------");
+    														for(String paratype : method.getParameterTypes())
+    															System.out.println("paratype:" + paratype);
+    														System.out.println();
+    														System.out.println("----------paraname----------");
+    														for(String paraname : method.getParameterNames())
+    															System.out.println("paraname:" + paraname);
+    														System.out.println();
+    													}
+    													// getSignature()
 
     													boolean addAnnotation = false;
 

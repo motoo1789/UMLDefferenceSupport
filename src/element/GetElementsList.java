@@ -9,6 +9,8 @@ import java.util.Map;
 public class GetElementsList implements IElementOperation {
 
 	GetElementsFromSourceCode getelement;
+	SendElementsToDatabase singletonDatabase = SendElementsToDatabase.getInstance();
+
 	//Map<String,List<String>> sendClassInfo = new HashMap<String,List<String>>();
 	Map<String,ClassInfo> sendClassInfo = new HashMap<String,ClassInfo>();
 

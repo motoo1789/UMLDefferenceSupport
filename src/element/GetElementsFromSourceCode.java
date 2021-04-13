@@ -8,11 +8,9 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
@@ -50,16 +48,10 @@ import org.eclipse.jdt.core.JavaModelException;
     		// TODO 自動生成されたメソッド・スタブ
     		IWorkspaceRoot root = singletonPluginResource.getWorcspaceRoot();
     		getElement(root);
-    		realize();
     		sendobj.excute();
 
     	}
 
-    	private synchronized void realize()
-    	{
-    		if(sendobj == null)
-    			sendobj = new GetElementsList(this);
-    	}
 
     	public void getElement(IWorkspaceRoot root) {
 
@@ -67,6 +59,7 @@ import org.eclipse.jdt.core.JavaModelException;
 
     		try {
     			IJavaElement[] elements = model.getChildren();
+
 
     			for(int i = 0; i < elements.length; i++) {
     				System.out.println("GetElements.excute.i:for");
@@ -87,62 +80,42 @@ import org.eclipse.jdt.core.JavaModelException;
     										System.out.println("GetElements.excute.n:for");
     										if(packageFragment.getChildren()[n].getElementType() == 5) {
     											ICompilationUnit compilationUnit = ((ICompilationUnit)packageFragment.getChildren()[n]);
-
-    											List<String> fieldName = new ArrayList<>();
-    											List<String> methodName = new ArrayList<>();
-    											Map<String, String> fieldtypemap = new HashMap<String,String>();	// <フィールド名,型>
-    											Map<String, String> methodreturnvalueMap = new HashMap<String,String>(); // <メソッド名,戻りの型>
-    											Map<String, List<String>> methodparatypeMap = new HashMap<String,List<String>>(); // <メソッド名,引数の型>
-    											Map<String, List<String>> methodparannmeMap = new HashMap<String,List<String>>(); // <メソッド名,引数の名前>
-    											//List<String> instanceList = new ArrayList<>();
-    											//List<Integer> misAnnotationList = new ArrayList<>();
-    											Map<String, Integer> fieldPos = new HashMap<>();
-    											Map<String, Integer> methodPos = new HashMap<>();
-    											Map<String, Integer> instancePos = new HashMap<>();
-
-
-
+//    											List<String> fieldName = new ArrayList<>();	// フィールドの名前
+//    											List<String> methodName = new ArrayList<>();	// メソッドの名前
+//    											Map<String, String> fieldtypemap = new HashMap<String,String>();	// <フィールド名,型>
+//    											Map<String, String> methodreturnvalueMap = new HashMap<String,String>(); // <メソッド名,戻りの型>
+//    											Map<String, List<String>> methodparatypeMap = new HashMap<String,List<String>>(); // <メソッド名,引数の型>
+//    											Map<String, List<String>> methodparannmeMap = new HashMap<String,List<String>>(); // <メソッド名,引数の名前>
+//    											List<String> instanceList = new ArrayList<>();
+//    											List<Integer> misAnnotationList = new ArrayList<>();
+//    											Map<String, Integer> fieldPos = new HashMap<>();
+//    											Map<String, Integer> methodPos = new HashMap<>();
+//    											Map<String, Integer> instancePos = new HashMap<>();
+//
 
     											IJavaElement elementss[] = compilationUnit.getChildren();
+    											Map<String, ActiveSourceCodeInfo> sendDatabaseinfo = new HashMap<String,ActiveSourceCodeInfo>();
+
     											for(IJavaElement javaElement : elementss) {
     												System.out.println("GetElements.excute.:拡張for文");
     												String className = "ClassGetErr";
 
     												if(javaElement.getElementType() == IJavaElement.TYPE) { //ソースタイプ(クラス)かを確認
     													IType type = (IType)javaElement;
+    													className = type.getElementName();
 
-    													System.out.println();
-    													System.out.println("classname:" + type.getElementName());
-    													IField[] fields = type.getFields();
-    													for(IField field : fields)
-    														System.out.println("fieldname:" + field.getElementName() + " type:" + field.getTypeSignature());
+    													// ClassInfoクラスに処理をやらせるかどうか
+    													ActiveSourceCodeInfo sourceinfo = new ActiveSourceCodeInfo();
+    													sourceinfo.setinfo(type);
 
-    													IMethod[] methods = type.getMethods();
-    													for(IMethod method : methods)
-    													{
-    														System.out.println("----------methodname----------");
-    														System.out.println("methodname:" + method.getElementName());
-    														System.out.println("----------signaturetype----------");
-    														System.out.println("sigunaturetype:" + method.getSignature());
-    														System.out.println();
-    														System.out.println("----------returntype----------");
-    														System.out.println(" returntype:" + method.getReturnType());
-    														System.out.println("----------paratype----------");
-    														for(String paratype : method.getParameterTypes())
-    															System.out.println("paratype:" + paratype);
-    														System.out.println();
-    														System.out.println("----------paraname----------");
-    														for(String paraname : method.getParameterNames())
-    															System.out.println("paraname:" + paraname);
-    														System.out.println();
-    													}
+    													sendDatabaseinfo.put(className, sourceinfo);
 
-    													fieldsList.put(className, fieldName);
-    													methodsList.put(className, methodName);
-    													//this.misAnnotationList.put(className, misAnnotationList);
-    													this.fieldPos.put(className, fieldPos);
-    													this.methodPos.put(className, methodPos);
-    													this.instancePos.put(className, instancePos);
+//    													fieldsList.put(className, fieldName);
+//    													methodsList.put(className, methodName);
+//    													this.misAnnotationList.put(className, misAnnotationList);
+//    													this.fieldPos.put(className, fieldPos);
+//    													this.methodPos.put(className, methodPos);
+//    													this.instancePos.put(className, instancePos);
 
     													// getSignature()
 

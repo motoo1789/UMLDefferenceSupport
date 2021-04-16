@@ -22,7 +22,7 @@ public class ActiveSourceCodeInfo {
 
 	public ActiveSourceCodeInfo()
 	{
-
+		System.out.println("クラス情報格納のためのObjectが生成");
 	}
 
 	void setinfo(IType type) throws JavaModelException
@@ -112,4 +112,28 @@ public class ActiveSourceCodeInfo {
 		System.out.println();
 	}
 
+	String getClassName()
+	{
+		return classname;
+	}
+
+	Map<String, String> getFieldMap()
+	{
+		return fieldMap;
+	}
+
+	Map<String, String> getMethodeRturnValueMap()
+	{
+		return methodreturnvalueMap;
+	}
+
+	Map<String, List<String>> getMethodParaNameMap()
+	{
+		return methodparanameMap;
+	}
+
+	Map<String, List<String>> getMethodParaTypeMap()
+	{
+		return methodparatypeMap;
+	}
 }

@@ -48,8 +48,6 @@ import org.eclipse.jdt.core.JavaModelException;
     		// TODO 自動生成されたメソッド・スタブ
     		IWorkspaceRoot root = singletonPluginResource.getWorcspaceRoot();
     		getElement(root);
-    		sendobj.excute();
-
     	}
 
 
@@ -80,22 +78,9 @@ import org.eclipse.jdt.core.JavaModelException;
     									for(int n = 0; n < packageFragment.getChildren().length; n++) {//パッケージからicompilationunitを探す
     										System.out.println("GetElements.excute.n:for");
     										if(packageFragment.getChildren()[n].getElementType() == 5) {
+
     											ICompilationUnit compilationUnit = ((ICompilationUnit)packageFragment.getChildren()[n]);
-//    											List<String> fieldName = new ArrayList<>();	// フィールドの名前
-//    											List<String> methodName = new ArrayList<>();	// メソッドの名前
-//    											Map<String, String> fieldtypemap = new HashMap<String,String>();	// <フィールド名,型>
-//    											Map<String, String> methodreturnvalueMap = new HashMap<String,String>(); // <メソッド名,戻りの型>
-//    											Map<String, List<String>> methodparatypeMap = new HashMap<String,List<String>>(); // <メソッド名,引数の型>
-//    											Map<String, List<String>> methodparannmeMap = new HashMap<String,List<String>>(); // <メソッド名,引数の名前>
-//    											List<String> instanceList = new ArrayList<>();
-//    											List<Integer> misAnnotationList = new ArrayList<>();
-//    											Map<String, Integer> fieldPos = new HashMap<>();
-//    											Map<String, Integer> methodPos = new HashMap<>();
-//    											Map<String, Integer> instancePos = new HashMap<>();
-//
-
     											IJavaElement elementss[] = compilationUnit.getChildren();
-
 
     											for(IJavaElement javaElement : elementss) {
     												System.out.println("GetElements.excute.:拡張for文");
@@ -112,93 +97,7 @@ import org.eclipse.jdt.core.JavaModelException;
 
     													sendDatabaseinfo.put(className, sourceinfo);
 
-    													singletonDatabaseObject.sendDatabase(sendDatabaseinfo);
-
     													System.out.println();
-//    													fieldsList.put(className, fieldName);
-//    													methodsList.put(className, methodName);
-//    													this.misAnnotationList.put(className, misAnnotationList);
-//    													this.fieldPos.put(className, fieldPos);
-//    													this.methodPos.put(className, methodPos);
-//    													this.instancePos.put(className, instancePos);
-
-    													// getSignature()
-
-//    													boolean addAnnotation = false;
-//
-//    													for(IAnnotation annotaion : type.getAnnotations()) {
-//    														if(annotaion.getElementName().equals(CLASS_ANNOTATION)) {
-//    															className = annotaion.getMemberValuePairs()[0].getValue().toString();
-//    															classNameList.add(className);
-//    															addAnnotation = true;
-//    														}
-//    													}
-//
-//    													if(!addAnnotation) {//アノテーションがついてなかったら
-//    														className = type.getElementName();
-//    														classNameList.add(className);//クラス名
-//    													}
-//
-//    													originalClassName.put(type.getElementName(), className);
-//    													classPos.put(type.getElementName(), type.getSourceRange().getOffset());
-//
-//
-//    													for(IField field : fields) {
-//    														System.out.println("GetElements.excute.IField拡張for文");
-//    														addAnnotation = false;
-//
-//    														if(originalClassNameList.contains(field.toString().split(" ", 2)[0])) {//インスタンスかを確認
-//    															for(IAnnotation annotation : field.getAnnotations()){
-//    																if(annotation.getElementName().equals(INSTANCE_ANNOTATION)) {
-//    																	instanceList.add(annotation.getMemberValuePairs()[0].getValue().toString());
-//    																	addAnnotation = true;
-//    																	instancePos.put(className, field.getNameRange().getOffset());
-//    																}
-//    																if(annotation.getElementName().equals(FIELD_ANNOTATION)) {//間違ったアノテーションがついていたらoffsetを記録
-//    																	misAnnotationList.add(field.getNameRange().getOffset());
-//    																}
-//    															}
-//
-//    															if(!addAnnotation) {
-//    																instanceList.add(field.getElementName());
-//    																instancePos.put(field.getElementName(), field.getNameRange().getOffset());
-//    															}
-//    														}else { //インスタンスじゃない場合(普通のフィールド)
-//    															for(IAnnotation annotation : field.getAnnotations()) {
-//    																if(annotation.getElementName().equals(FIELD_ANNOTATION)) {
-//    																	fieldName.add(annotation.getMemberValuePairs()[0].getValue().toString());
-//    																	fieldPos.put(annotation.getMemberValuePairs()[0].getValue().toString(), field.getNameRange().getOffset());
-//    																	addAnnotation = true;
-//    																}
-//
-//    																if(annotation.getElementName().equals(INSTANCE_ANNOTATION)) {
-//    																	misAnnotationList.add(field.getNameRange().getOffset());
-//    																}
-//    															}
-//
-//    															if(!addAnnotation) {
-//    																fieldName.add(field.getElementName());
-//    																fieldPos.put(field.getElementName(), field.getNameRange().getOffset());
-//    															}
-//    														}
-//    													}
-//
-//    													for(IMethod method : methods) {
-//    														addAnnotation = false;
-//
-//    														for(IAnnotation annotation : method.getAnnotations()) {
-//    															if(annotation.getElementName().equals(METHOD_ANNOTATION)) {
-//    																addAnnotation = true;
-//    																methodName.add(annotation.getMemberValuePairs()[0].getValue().toString());
-//    																methodPos.put(annotation.getMemberValuePairs()[0].getValue().toString(), method.getNameRange().getOffset());
-//    															}
-//    														}
-//
-//    														if(!addAnnotation) {
-//    															methodName.add(method.getElementName());
-//    														}
-//    													}
-
 
     												}
     											}
@@ -210,6 +109,9 @@ import org.eclipse.jdt.core.JavaModelException;
     					}
     				}
     			}
+    			// データベースに送るメソッド
+    			singletonDatabaseObject.sendDatabase(sendDatabaseinfo);
+
     		}catch (JavaModelException e) {
     			// TODO 自動生成された catch ブロック
     			e.printStackTrace();

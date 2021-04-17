@@ -23,8 +23,10 @@ class SendElementsToDatabase {
 	private final String USER = "root";
 	private final String PASWORD = "root";
 
+	private int classNum = 1; // クラスに番号をつけるのに使う
+	private int fieldNum = 1;
+	private int methodNum = 1;
 	private int paraNum = 1;
-
 
 	private SendElementsToDatabase()
 	{
@@ -51,9 +53,11 @@ class SendElementsToDatabase {
 
 	public void sendDatabase(Map<String, ActiveSourceCodeInfo> sendDatabaseinfo)
 	{
+		reset(); // テーブルの削除をして前の情報が残ることによるバグを対処
+		deleteBeforeData();
 		// umldsに送信
 		Iterator<String> key_itr = sendDatabaseinfo.keySet().iterator();
-		int classNum = 1; // クラスに番号をつけるのに使う
+
 
 		while(key_itr.hasNext())
 		{
@@ -70,60 +74,28 @@ class SendElementsToDatabase {
 	private void sendClassInfo(final int classNum,final String classname)
 	{
 		System.out.println("SendElementsToDatabase.sendClassInfo");
-		String insert = "insert into class(class_num,class_name,project_num) values ";
+		final String INSERT = "insert into class(class_num,class_name,project_num) values (?,?,?)";
 		String value = "(" + String.valueOf(classNum) + "," + "\"" + classname + "\"" + "," + "0);";
 
 		// クラスに関するsqlを送信
-		String sql = insert + value;
-		send(sql);
-
+		String sql = INSERT + value;
+		sendClass(INSERT,classNum,classname,0);
+		System.out.println("SendElementsToDatabase.sendClassInfo.終わり");
 	}
 
 	private void sendFieldInfo(final int classNum,final Map<String, String> fieldMap)
 	{
 		System.out.println("SendElementsToDatabase.sendFieldInfo");
-		String insert = "insert into field(field_num,class_name,field_name,field_type) values (?,?,?,?)";
+		final String INSERT = "insert into field(field_num,class_num,field_name,field_type) values (?,?,?,?)";
 		Iterator<String> key_itr = fieldMap.keySet().iterator();
-		int fieldNum = 1;
+
 
 		// フィールドが複数ある時のループ
 		while(key_itr.hasNext())
 		{
 			String fieldname = key_itr.next();
-//			String value = "(" + String.valueOf(fieldNum) + "," +
-//								 String.valueOf(classNum) + ", "
-//								 + "," + "\"" +  fieldname + "\"" + ","
-//								 + "," + "\"" + fieldMap.get(fieldname) + "\"" + ");";
-//
-//			// フィールドに関するsqlを送信
-//			String sql = insert + value;
-//			send(sql);
-//			fieldNum++;
-
-			///
-			try {
-				//con = hikari.getConnection();
-				Class.forName(DRIVER_NAME);
-				this.con = DriverManager.getConnection(URL,USER,PASWORD);
-				try(PreparedStatement ps = con.prepareStatement(insert)){
-					ps.setString(1, String.valueOf(fieldNum)); // パラメータ番号に仮で１を入れる パラメータ番号自体なくてもいいかも
-					ps.setString(2,String.valueOf(classNum));
-		            ps.setString(3,fieldname);
-		            ps.setString(4, fieldMap.get(fieldname));
-
-		            ps.executeUpdate();
-		            con.commit();
-		        } catch (Exception e) {
-		            con.rollback();
-		            System.out.println("rollback");
-		            throw e;
-		        }
-
-			} catch (SQLException | ClassNotFoundException e) {
-				// TODO 自動生成された catch ブロック
-				e.printStackTrace();
-			}
-
+			sen_FieldandMethod(INSERT,fieldNum,classNum,fieldname,fieldMap.get(fieldname));
+			fieldNum++;
 		}
 	}
 
@@ -133,47 +105,20 @@ class SendElementsToDatabase {
 	{
 		System.out.println("SendElementsToDatabase.sendMethodInfo");
 		final Map<String, String> methodreturnvalueMap = sendDatabaseinfo.get(classname).getMethodeRturnValueMap();
-		String insert = "insert into method(method_num,class_name,method_name,returnvalue) values (?,?,?,?)";
+		final String INSERT = "insert into method(method_num,class_num,method_name,returnvalue) values (?,?,?,?)";
 		Iterator<String> key_itr = methodreturnvalueMap.keySet().iterator();
 
-		int methodNum = 1;
+
 		// フィールドが複数ある時のループ
 		while(key_itr.hasNext())
 		{
 			String methodName = key_itr.next();
-//			String value = "(" + String.valueOf(methodNum) + "," +
-//								 String.valueOf(classNum) + ", "
-//								 + "'" + methodName + "'" + "," +
-//								 "'" + methodreturnvalueMap.get(methodName) + "');";
-//
+
 			Map<String, List<String>> methodparatypeMap = sendDatabaseinfo.get(classname).getMethodParaTypeMap();
 			Map<String, List<String>> methodparanameMap = sendDatabaseinfo.get(classname).getMethodParaNameMap();
-//
+
 //			// 戻り値に関するsqlを送信
-//			String sql = insert + value;
-//			send(sql);
-			try {
-				//con = hikari.getConnection();
-				Class.forName(DRIVER_NAME);
-				this.con = DriverManager.getConnection(URL,USER,PASWORD);
-				try(PreparedStatement ps = con.prepareStatement(insert)){
-					ps.setString(1, String.valueOf(methodNum)); // パラメータ番号に仮で１を入れる パラメータ番号自体なくてもいいかも
-					ps.setString(2,String.valueOf(classNum));
-		            ps.setString(3,methodName);
-		            ps.setString(4,methodreturnvalueMap.get(methodName));
-
-		            ps.executeUpdate();
-		            con.commit();
-		        } catch (Exception e) {
-		            con.rollback();
-		            System.out.println("rollback");
-		            throw e;
-		        }
-
-			} catch (SQLException | ClassNotFoundException e) {
-				// TODO 自動生成された catch ブロック
-				e.printStackTrace();
-			}
+			sen_FieldandMethod(INSERT,methodNum,classNum,methodName,methodreturnvalueMap.get(methodName));
 
 			// パラメータに関するsqlを送信
 			sendMethodParaInfo(methodNum,methodName,methodparatypeMap,methodparanameMap);
@@ -185,83 +130,66 @@ class SendElementsToDatabase {
 	private void sendMethodParaInfo(final int methodNum,String methodName,final Map<String, List<String>> methodparatypeMap,Map<String, List<String>> methodparanameMap)
 	{
 		System.out.println("SendElementsToDatabase.sendMethodParaInfo");
+		final String INSERT = "insert into m_parameta(para_num,method_num,para_type,para_name) values (?,?,?,?)";
 		List<String> typelist = methodparatypeMap.get(methodName);
-		List<String> namelist = methodparatypeMap.get(methodName);
+		List<String> namelist = methodparanameMap.get(methodName);
 
-		// int paraNum = 1;
+		//
 		// フィールドが複数ある時のループ
 		for(int listNum = 0; listNum < typelist.size(); listNum++)
 		{
 			String type = typelist.get(listNum);
 			String name = namelist.get(listNum);
 
-			sendPara(String.valueOf(methodNum),type,name);
+			sen_FieldandMethod(INSERT,paraNum,methodNum,type,name);
 		}
-
-
-//		while(key_itr.hasNext())
-//		{
-//			String methodname = key_itr.next();
-//			String value = "(" + String.valueOf(paraNum) + "," +
-//								 String.valueOf(methodNum) + ", "
-//								 + "'" + methodparatypeMap.get(methodname) + "'" + "," +
-//								 "'" + methodparanameMap.get(methodname) + "');";
-//
-//			String sql = insert + value;
-//			send(sql);
-//			paraNum++;
-//		}
-
-
-
-//		Iterator<String> key_itr = methodparatypeMap.keySet().iterator();
-//
-//		int paraNum = 1;
-//		// フィールドが複数ある時のループ
-//		while(key_itr.hasNext())
-//		{
-//			String methodname = key_itr.next();
-//			String value = "(" + String.valueOf(paraNum) + "," +
-//								 String.valueOf(methodNum) + ", "
-//								 + "'" + methodparatypeMap.get(methodname) + "'" + "," +
-//								 "'" + methodparanameMap.get(methodname) + "');";
-//
-//			String sql = insert + value;
-//			send(sql);
-//			paraNum++;
-//		}
+		paraNum++;
 	}
 
-	private void send(String sql)
+	private void sendClass(String insert, int classNum, String classname,int projectNum)
 	{
+		System.out.println("SendElementsToDatabase.sendClass");
 		try {
 			//con = hikari.getConnection();
 			Class.forName(DRIVER_NAME);
 			this.con = DriverManager.getConnection(URL,USER,PASWORD);
-			this.stm = con.createStatement();
-			stm.executeUpdate(sql);
+			//this.con.setAutoCommit(false);
+			try(PreparedStatement ps = con.prepareStatement(insert)){
+				ps.setInt(1, classNum); // パラメータ番号に仮で１を入れる パラメータ番号自体なくてもいいかも
+				ps.setString(2,classname);
+	            ps.setInt(3,projectNum);
+
+	            ps.executeUpdate();
+	            //con.commit();
+	        } catch (Exception e) {
+	            con.rollback();
+	            System.out.println("rollback");
+	            throw e;
+	        }
 		} catch (SQLException | ClassNotFoundException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
+		System.out.println("SendElementsToDatabase.sendClass終わり");
 	}
 
-	private void sendPara(final String methodNum, final String type, final String name)
+	private void sen_FieldandMethod(final String insert, final int primaryNum, final int foreignNum, final String parameterIndex3, final String parameterIndex4)
 	{
 		System.out.println("SendElementsToDatabase.sendPara");
-		String insert = "insert into m_parameta(para_num,method_num,para_type,para_name) values (?,?,?)";
+		System.out.println("privmaryNum:" + primaryNum + " foreignNum:" + foreignNum + " parameterIndex3;" + parameterIndex3 + " paraIndex4:" + parameterIndex4);
 		try {
 			//con = hikari.getConnection();
 			Class.forName(DRIVER_NAME);
 			this.con = DriverManager.getConnection(URL,USER,PASWORD);
+			//this.con.setAutoCommit(false);
+
 			try(PreparedStatement ps = con.prepareStatement(insert)){
-				ps.setString(1, String.valueOf(paraNum++)); // パラメータ番号に仮で１を入れる パラメータ番号自体なくてもいいかも
-				ps.setString(2,methodNum);
-	            ps.setString(3,type);
-	            ps.setString(4, name);
+				ps.setInt(1, primaryNum); // パラメータ番号に仮で１を入れる パラメータ番号自体なくてもいいかも
+				ps.setInt(2,foreignNum);
+	            ps.setString(3,parameterIndex3);
+	            ps.setString(4, parameterIndex4);
 
 	            ps.executeUpdate();
-	            con.commit();
 	        } catch (Exception e) {
 	            con.rollback();
 	            System.out.println("rollback");
@@ -272,7 +200,36 @@ class SendElementsToDatabase {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
+	}
 
+	private void reset()
+	{
+		classNum = 1;
+		fieldNum = 1;
+		methodNum = 1;
+		paraNum = 1;
+		deleteBeforeData();
+	}
+
+	private void deleteBeforeData()
+	{
+		final String deleteclSQL_class = "delete from class;";
+		final String deleteclSQL_field = "delete from field;";
+		final String deleteclSQL_method = "delete from method;";
+		final String deleteclSQL_parameta = "delete from m_parameta;";
+
+		try {
+			Class.forName(DRIVER_NAME);
+			this.con = DriverManager.getConnection(URL,USER,PASWORD);
+			this.stm = con.createStatement();
+			stm.executeUpdate(deleteclSQL_parameta);
+			stm.executeUpdate(deleteclSQL_field);
+			stm.executeUpdate(deleteclSQL_method);
+			stm.executeUpdate(deleteclSQL_class);
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
 	}
 }
 

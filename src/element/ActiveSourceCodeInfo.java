@@ -76,8 +76,8 @@ public class ActiveSourceCodeInfo {
 	void setMethodReturnValue(String methodName, IMethod method) throws JavaModelException
 	{
 		System.out.println("----------returntype----------");
-		System.out.println(" returntype:" + method.getReturnType());
 		methodreturnvalueMap.put(methodName, method.getReturnType());
+		System.out.println(" returntype:" + methodreturnvalueMap.get(methodName));
 	}
 
 	// パラメータの型
@@ -88,8 +88,8 @@ public class ActiveSourceCodeInfo {
 		System.out.println("----------paratype----------");
 		for(String paratype : method.getParameterTypes())
 		{
-			System.out.println("paratype:" + paratype);
 			methodparatypeList.add(paratype);
+			System.out.println("paratype:" + methodparatypeList);
 		}
 		methodparatypeMap.put(methodName, methodparatypeList);
 		System.out.println("メソッドのパラメータの型をListにaddした");
@@ -103,8 +103,8 @@ public class ActiveSourceCodeInfo {
 		System.out.println("----------paraname----------");
 		for(String paraname : method.getParameterNames())
 		{
-			System.out.println("paraname:" + paraname);
 			methodparanameList.add(paraname);
+			System.out.println("paraname:" + methodparanameList);
 		}
 		methodparanameMap.put(methodName, methodparanameList);
 		System.out.println("メソッドのパラメータの名前をListにaddした");

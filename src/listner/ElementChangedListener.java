@@ -7,12 +7,14 @@ import org.eclipse.jdt.core.IJavaElementDelta;
 
 import control.PluginControler;
 import element.IElementOperation;
+import posttest.PostTest;
 import umldifferencesupport.Activator;
 
 public class ElementChangedListener extends AbstractListner implements IElementChangedListener {
 
 	//private PluginControler controller;
 	IElementOperation getelementobj = (IElementOperation) elementoperation.get(GET_KEY);
+	PostTest posttest = new PostTest();
 
 	public ElementChangedListener() {
 		// TODO 自動生成されたコンストラクター・スタブ
@@ -45,7 +47,9 @@ public class ElementChangedListener extends AbstractListner implements IElementC
 			if((arg0.getDelta().getFlags() & IJavaElementDelta.F_AST_AFFECTED) != 0) {
 				if(_check(arg0.getDelta().getAffectedChildren())) {
 					System.out.println("ElementChangedListener.elementChanged.CHANGED");
-					listnerToElement();
+					// listnerToElement();
+					posttest.posttest();
+
 				}
 			}
 			break;

@@ -1,0 +1,16 @@
+修飾子のメモ
+0  なし
+1 public
+2 private
+4 protected
+8 static
+16 final
+32 synchronized
+64 volatile
+128 transient
+256 native
+512 interface
+1024 abstract
+2048 strictfp
+
+*public static など組み合わさっている場合は数字が足される
